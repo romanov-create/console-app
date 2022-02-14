@@ -1,13 +1,11 @@
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BinaryOperator;
-import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
 
-        Integer[] arrNumbers = new Integer[]{2, 2, 2};
+        Integer[] arrNumbers = new Integer[]{2, 4, 2};
 
         int sumOfNumbers = calculate(arrNumbers, MathOperation.SUM);
         int MultiOfNumbers = calculate(arrNumbers, MathOperation.MULTI);
@@ -18,8 +16,19 @@ public class Main {
     }
 
     enum MathOperation {
-        SUM,
-        MULTI;
+        SUM{
+            public BinaryOperator<Integer> operator(){
+                return Integer::sum;
+            }
+        },
+        MULTI{
+            public BinaryOperator<Integer> operator(){
+                return  (a, b) -> a * b;
+            }
+        };
+
+    public abstract BinaryOperator<Integer> operator();
+
     }
 
     public static int calculate(Integer[] arrayNumbers, MathOperation mathOperation) {
@@ -27,22 +36,8 @@ public class Main {
             throw new IllegalArgumentException("please, fill in the array of numbers");
         }
 
-        List<Integer> listOfNumbers = Arrays.asList(arrayNumbers);
-        BinaryOperator<Integer> binOperation = null;
-
-        if (mathOperation == MathOperation.SUM) {
-            binOperation = Integer::sum;
-        }
-
-        if (mathOperation == MathOperation.MULTI) {
-            binOperation = (a, b) -> a * b;
-        }
-
-        if (binOperation == null) {
-            throw new IllegalArgumentException("binOperation not is null !");
-        }
-
-        return  listOfNumbers.stream().reduce(binOperation).get();
+        List<Integer> list = Arrays.asList(arrayNumbers);
+        return  list.stream().reduce(mathOperation.operator()).get();
     }
 }
 
