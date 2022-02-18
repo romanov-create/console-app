@@ -2,10 +2,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
-public class Main {
+public class SumMultiOperator {
     public static void main(String[] args) {
 
-        Integer[] arrNumbers = new Integer[]{2, 4, 2};
+        Integer[] arrNumbers = new Integer[]{2, 2, 2};
 
         int sumOfNumbers = calculate(arrNumbers, MathOperation.SUM);
         int MultiOfNumbers = calculate(arrNumbers, MathOperation.MULTI);
@@ -16,19 +16,18 @@ public class Main {
     }
 
     enum MathOperation {
-        SUM{
-            public BinaryOperator<Integer> operator(){
+        SUM {
+            public BinaryOperator<Integer> operator() {
                 return Integer::sum;
             }
         },
-        MULTI{
-            public BinaryOperator<Integer> operator(){
-                return  (a, b) -> a * b;
+        MULTI {
+            public BinaryOperator<Integer> operator() {
+                return (a, b) -> a * b;
             }
         };
 
-    public abstract BinaryOperator<Integer> operator();
-
+        public abstract java.util.function.BinaryOperator<Integer> operator();
     }
 
     public static int calculate(Integer[] arrayNumbers, MathOperation mathOperation) {
@@ -37,7 +36,24 @@ public class Main {
         }
 
         List<Integer> list = Arrays.asList(arrayNumbers);
+
+        //Integer integer = myReduce(arrayNumbers, mathOperation.operator());
         return  list.stream().reduce(mathOperation.operator()).get();
     }
+
+    public static <T> T myReduce(T[] array, java.util.function.BinaryOperator<T> binaryOperator) {
+        if (array == null || array.length == 0) {
+            return null;
+        }
+
+        T result = array[0];
+
+        for (int i = 1; i < array.length; i++) {
+            result = binaryOperator.apply(result, array[i]);
+        }
+
+        return result;
+    }
+
 }
 
